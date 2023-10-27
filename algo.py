@@ -26,7 +26,28 @@ def solve(init_state, init_location, method):
         return list(np.random.randint(1, 12+1, 10))
     
     elif method == 'IDS-DFS':
-        ...
+        ans_list = []
+
+        def LDFS(state, limit):
+            if np.array_equal(state, solved_state()):
+                return True
+
+            if limit == 0:
+                return False
+
+            for i in range(1, 13):
+                if LDFS(next_state(state, i), limit - 1):
+                    ans_list.append(i)
+                    return True
+
+            return False
+
+        limit = 1
+        while True:
+            if LDFS(init_state, limit):
+                ans_list.reverse()
+                return ans_list
+            limit += 1
     
     elif method == 'A*':
         ...
