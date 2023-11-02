@@ -30,14 +30,17 @@ def solve(init_state, init_location, method):
 
     elif method == 'IDS-DFS':
         ans_list = []
+        count = {'expanded': 0, 'explored': 0}
 
         def LDFS(state, limit):
+            count.update({'expanded': count.get('expanded') + 1})
             if np.array_equal(state, solved_state()):
                 return True
 
             if limit == 0:
                 return False
 
+            count.update({'explored': count.get('explored') + 12})
             for i in range(1, 13):
                 if LDFS(next_state(state, i), limit - 1):
                     ans_list.append(i)
@@ -47,7 +50,10 @@ def solve(init_state, init_location, method):
 
         limit = 1
         while True:
+            count.update({'explored': count.get('explored') + 1})
             if LDFS(init_state, limit):
+                print("explored:" + str(count.get('explored')))
+                print("expanded:" + str(count.get('expanded')))
                 ans_list.reverse()
                 return ans_list
             limit += 1
@@ -70,17 +76,20 @@ def solve(init_state, init_location, method):
         visited = {}
         heapq.heappush(fringe, [calculate_heuristic(init_location), 0, 0, init_state, init_location, []])
         visited.update({init_state.__str__(): 0})
-        count = 0
+        expanded_count = 0
+        explored_count = 0
         while True:
             forecasted_cost, current_cost, _, current_state, current_location, current_sol = heapq.heappop(fringe)
+            expanded_count += 1
             if np.array_equal(current_state, solved_state()):
                 break
             for i in range(1, 13):
                 if next_state(current_state, i).__str__() not in visited.keys() or i < visited.get(next_state(current_state, i).__str__()):
-                    count += 1
+                    explored_count += 1
                     visited.update({next_state(current_state, i).__str__(): current_cost + 1})
-                    heapq.heappush(fringe, [current_cost + calculate_heuristic(next_location(current_location, i)) + 1, current_cost + 1, count, next_state(current_state, i), next_location(current_location, i), np.append(current_sol, i)]),
-
+                    heapq.heappush(fringe, [current_cost + calculate_heuristic(next_location(current_location, i)) + 1, current_cost + 1, explored_count, next_state(current_state, i), next_location(current_location, i), np.append(current_sol, i)]),
+        print("explored:" + str(explored_count))
+        print("expanded:" + str(expanded_count))
         return current_sol
 
     elif method == 'BiBFS':
