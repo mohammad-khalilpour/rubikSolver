@@ -61,15 +61,12 @@ def solve(init_state, init_location, method):
     elif method == 'A*':
 
         def calculate_heuristic(location):
+            s_location = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
             heuristic = 0
-            for x1 in range(2):
-                for y1 in range(2):
-                    for z1 in range(2):
-                        for x2 in range(2):
-                            for y2 in range(2):
-                                for z2 in range(2):
-                                    if solved_location()[z2][y2][x2] == location[z1][y1][x1]:
-                                        heuristic += abs(z1 - z2) + abs(y2 - y1) + abs(x2 - x1)
+            for x in range(2):
+                for y in range(2):
+                    for z in range(2):
+                        heuristic += abs(x - s_location[location[z][y][x]-1][2]) + abs(y - s_location[location[z][y][x]-1][1]) + abs(z - s_location[location[z][y][x]-1][0])
             return heuristic / 4
 
         fringe = []
