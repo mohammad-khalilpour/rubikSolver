@@ -58,7 +58,7 @@ def solve(init_state, init_location, method):
                 return ans_list
             limit += 1
 
-    elif method == 'A*':
+    elif method == 'As':
 
         def calculate_heuristic(location):
             s_location = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
@@ -70,20 +70,20 @@ def solve(init_state, init_location, method):
             return heuristic / 4
 
         fringe = []
-        visited = {}
+        visited = set()
         heapq.heappush(fringe, [calculate_heuristic(init_location), 0, 0, init_state, init_location, []])
-        visited.update({init_state.__str__(): 0})
+        visited.add(init_state.__str__())
         expanded_count = 0
         explored_count = 0
         while True:
-            forecasted_cost, current_cost, _, current_state, current_location, current_sol = heapq.heappop(fringe)
+            _, current_cost, _, current_state, current_location, current_sol = heapq.heappop(fringe)
             expanded_count += 1
             if np.array_equal(current_state, solved_state()):
                 break
             for i in range(1, 13):
-                if next_state(current_state, i).__str__() not in visited.keys() or i < visited.get(next_state(current_state, i).__str__()):
+                if next_state(current_state, i).__str__() not in visited:
                     explored_count += 1
-                    visited.update({next_state(current_state, i).__str__(): current_cost + 1})
+                    visited.add(next_state(current_state, i).__str__())
                     heapq.heappush(fringe, [current_cost + calculate_heuristic(next_location(current_location, i)) + 1, current_cost + 1, explored_count, next_state(current_state, i), next_location(current_location, i), np.append(current_sol, i)]),
         print("explored:" + str(explored_count))
         print("expanded:" + str(expanded_count))
